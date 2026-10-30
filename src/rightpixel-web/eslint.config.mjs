@@ -1,0 +1,4 @@
+// TypeScript 7 is checked by tsc. This processor checks dependency edges without
+// relying on a TS parser whose supported peer range excludes TS 7.
+const edges={processors:{imports:{preprocess(source){const imports=[...source.matchAll(/(?:from\s*|import\s*)["']([^"']+)["']/g)].map(m=>`import ${JSON.stringify(m[1])};`).join('\n');return [imports];},postprocess(messages){return messages.flat();}}}};
+export default [{files:['src/**/*.ts'],plugins:{edges},processor:'edges/imports',languageOptions:{ecmaVersion:2022,sourceType:'module'}},{files:['src/features/**/*.ts','src/ui/**/*.ts'],rules:{'no-restricted-imports':['error',{patterns:['**/infrastructure/**','**/app/**']}]}},{files:['src/core/**/*.ts'],rules:{'no-restricted-imports':['error',{patterns:['**/infrastructure/**','**/app/**','**/features/**','**/ui/**']}]}},{files:['src/infrastructure/**/*.ts'],rules:{'no-restricted-imports':['error',{patterns:['**/features/**','**/app/**']}]} }];

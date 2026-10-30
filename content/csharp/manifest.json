@@ -1,0 +1,624 @@
+{
+  "version": 1,
+  "id": "csharp-mastery-v1",
+  "worldId": "csharp_core",
+  "title": "مستری C# و .NET · از مبانی تا معماری",
+  "sessions": [
+    {
+      "id": "S01",
+      "stageId": "cs_s01",
+      "phase": 1,
+      "title": "اکوسیستم .NET و معماری اجرای کد",
+      "prerequisite": "-",
+      "topics": "CLI, CLR, CTS, CLS, BCL, JIT, IL (MSIL), AOT vs JIT, Assembly Structure",
+      "nodes": 8,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/standard/managed-execution-process",
+        "https://learn.microsoft.com/en-us/dotnet/standard/common-type-system"
+      ],
+      "expectedOutput": "System.Int32\nTrue\n42"
+    },
+    {
+      "id": "S02",
+      "stageId": "cs_s02",
+      "phase": 1,
+      "title": "سیستم انواع داده و حافظه اولیه",
+      "prerequisite": "S01",
+      "topics": "Primitive Types, Value Types vs Reference Types, Memory Layout (Stack vs Heap مقدماتی)",
+      "nodes": 8,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/value-types",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/reference-types"
+      ],
+      "expectedOutput": "3,8,8"
+    },
+    {
+      "id": "S03",
+      "stageId": "cs_s03",
+      "phase": 1,
+      "title": "تبدیل انواع، عملیات و Boxing/Unboxing",
+      "prerequisite": "S02",
+      "topics": "Implicit/Explicit Casting, `is`/`as`, Boxing/Unboxing Overhead, Operators, Checked/Unchecked",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/types/boxing-and-unboxing",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/checked-and-unchecked"
+      ],
+      "expectedOutput": "overflow"
+    },
+    {
+      "id": "S04",
+      "stageId": "cs_s04",
+      "phase": 1,
+      "title": "جریان کنترل و ساختارهای تصمیم مدرن",
+      "prerequisite": "S03",
+      "topics": "Pattern Matching Switch, Switch Expressions, Guard Clauses, Loops, Loop Invariants",
+      "nodes": 8,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/switch-expression",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/iteration-statements"
+      ],
+      "expectedOutput": "7"
+    },
+    {
+      "id": "S05",
+      "stageId": "cs_s05",
+      "phase": 1,
+      "title": "متدها، پارامترها و قواعد فراخوانی",
+      "prerequisite": "S04",
+      "topics": "`in`, `out`, `ref`, `params` (Collections در C# 13), Overloading, Local Functions",
+      "nodes": 8,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/method-parameters",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-13"
+      ],
+      "expectedOutput": "True,5\nFalse"
+    },
+    {
+      "id": "S06",
+      "stageId": "cs_s06",
+      "phase": 2,
+      "title": "مبانی شیءگرایی: کپسوله‌سازی و انواع کلاس",
+      "prerequisite": "S05",
+      "topics": "Encapsulation, Access Modifiers, Classes, Constructors, Primary Constructors (C# 12/13)",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/access-modifiers",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/tutorials/primary-constructors"
+      ],
+      "expectedOutput": "15"
+    },
+    {
+      "id": "S07",
+      "stageId": "cs_s07",
+      "phase": 2,
+      "title": "وراثت و چندریختی (Inheritance & Polymorphism)",
+      "prerequisite": "S06",
+      "topics": "`virtual`, `override`, `new` (shadowing), `abstract`, `sealed`, Base Calling, VTable",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/object-oriented/polymorphism",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/override"
+      ],
+      "expectedOutput": "10"
+    },
+    {
+      "id": "S08",
+      "stageId": "cs_s08",
+      "phase": 2,
+      "title": "اینترفیس‌ها و قراردادهای نرم‌افزاری",
+      "prerequisite": "S07",
+      "topics": "Interface Segregation, Explicit Implementation, Default Interface Methods (DIM), Static Abstract Members",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/interfaces/explicit-interface-implementation",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/interface"
+      ],
+      "expectedOutput": "report"
+    },
+    {
+      "id": "S09",
+      "stageId": "cs_s09",
+      "phase": 2,
+      "title": "استراکت‌ها و مقایسه بنیادین با کلاس",
+      "prerequisite": "S07",
+      "topics": "`struct`, Memory Allocations, Mutability Hazards, `readonly struct`, Passing by `ref`",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/struct",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/advanced-topics/performance/"
+      ],
+      "expectedOutput": "2,7"
+    },
+    {
+      "id": "S10",
+      "stageId": "cs_s10",
+      "phase": 2,
+      "title": "رکوردها و برابری بر پایه مقادیر",
+      "prerequisite": "S09",
+      "topics": "`record class`, `record struct`, Value-based Equality, `with` Expressions, Immutability",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/with-expression"
+      ],
+      "expectedOutput": "100,80\nTrue"
+    },
+    {
+      "id": "S11",
+      "stageId": "cs_s11",
+      "phase": 3,
+      "title": "ژنریک‌ها (Generics) و محدودیت‌ها (Constraints)",
+      "prerequisite": "S08",
+      "topics": "Generic Classes/Methods, Type Safety, Performance (Zero-boxing), Constraints (`where T : ...`)",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/generics",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/generics/constraints-on-type-parameters"
+      ],
+      "expectedOutput": "8\nb"
+    },
+    {
+      "id": "S12",
+      "stageId": "cs_s12",
+      "phase": 3,
+      "title": "واریانس در ژنریک‌ها: Covariance و Contravariance",
+      "prerequisite": "S11",
+      "topics": "`out` (Covariance), `in` (Contravariance), Invariance, کاربرد در `IEnumerable<out T>` و `Action<in T>`",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/standard/generics/covariance-and-contravariance",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/covariance-contravariance/"
+      ],
+      "expectedOutput": "Ada\nLin\n2"
+    },
+    {
+      "id": "S13",
+      "stageId": "cs_s13",
+      "phase": 3,
+      "title": "سیستم ایمنی نال (Nullable Reference Types - NRT)",
+      "prerequisite": "S10",
+      "topics": "NRT, Null-forgiving (`!`), Null-conditional (`?.`), Null-coalescing (`??`, `??=`), Flow Analysis",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/nullable-references",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/null-coalescing-operator"
+      ],
+      "expectedOutput": "guest\nAda"
+    },
+    {
+      "id": "S14",
+      "stageId": "cs_s14",
+      "phase": 3,
+      "title": "الگوخوانی مدرن (Deep Pattern Matching)",
+      "prerequisite": "S13",
+      "topics": "Type, Relational, Positional, Property, Tuple, List/Slice Patterns (`[1, .., _]`)",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/patterns",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/functional/pattern-matching"
+      ],
+      "expectedOutput": "True\nFalse"
+    },
+    {
+      "id": "S15",
+      "stageId": "cs_s15",
+      "phase": 3,
+      "title": "دلیگیت‌ها، لامبدا و برنامه‌نویسی تابعی",
+      "prerequisite": "S11",
+      "topics": "Delegates, `Func<T>`, `Action<T>`, `Predicate<T>`, Anonymous Methods, Lambdas, Closures & Heap Allocation",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/lambda-expressions",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/delegates/"
+      ],
+      "expectedOutput": "20,40"
+    },
+    {
+      "id": "S16",
+      "stageId": "cs_s16",
+      "phase": 3,
+      "title": "رویدادها (Events) و الگوی Publisher-Subscriber",
+      "prerequisite": "S15",
+      "topics": "Events vs Delegates, Thread-safe Invocations, Memory Leaks via Event Handlers, Weak Events",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/events/",
+        "https://learn.microsoft.com/en-us/dotnet/desktop/wpf/events/weak-event-patterns"
+      ],
+      "expectedOutput": "1"
+    },
+    {
+      "id": "S17",
+      "stageId": "cs_s17",
+      "phase": 4,
+      "title": "کالکشن‌های پایه و تحلیل زمانی O(n)",
+      "prerequisite": "S11",
+      "topics": "`Array`, `List<T>`, `Dictionary<TKey, TValue>`, `HashSet<T>`, Hash Collision, Capacity Growth",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/standard/collections/selecting-a-collection-class",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1.add"
+      ],
+      "expectedOutput": "2,1"
+    },
+    {
+      "id": "S18",
+      "stageId": "cs_s18",
+      "phase": 4,
+      "title": "ساختمان داده‌های پیشرفته و تخصص‌یافته",
+      "prerequisite": "S17",
+      "topics": "`Queue<T>`, `Stack<T>`, `LinkedList<T>`, `PriorityQueue<TElement, TPriority>`, `SortedDictionary`",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.priorityqueue-2",
+        "https://learn.microsoft.com/en-us/dotnet/standard/collections/"
+      ],
+      "expectedOutput": "urgent\nnormal"
+    },
+    {
+      "id": "S19",
+      "stageId": "cs_s19",
+      "phase": 4,
+      "title": "کالکشن‌های تغییرناپذیر و فقط‌خواندنی",
+      "prerequisite": "S17",
+      "topics": "`IReadOnlyCollection`, `ReadOnlyCollection<T>`, `ImmutableList<T>`, `ImmutableArray<T>`",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/standard/collections/immutable/",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlycollection-1"
+      ],
+      "expectedOutput": "2,3"
+    },
+    {
+      "id": "S20",
+      "stageId": "cs_s20",
+      "phase": 4,
+      "title": "مکانیزم درونی LINQ و تله‌های پرفورمنس",
+      "prerequisite": "S15",
+      "topics": "`IEnumerable<T>`, `IEnumerator<T>`, `yield return`, Deferred Execution, Multiple Enumeration Trap",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/standard/linq/deferred-execution-lazy-evaluation",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/yield"
+      ],
+      "expectedOutput": "6\n3\n3"
+    },
+    {
+      "id": "S21",
+      "stageId": "cs_s21",
+      "phase": 4,
+      "title": "عملگرهای پیشرفته LINQ و درک Expression Trees",
+      "prerequisite": "S20",
+      "topics": "`SelectMany`, `GroupBy`, `Join`, `Aggregate`, `IQueryable<T>` vs `IEnumerable<T>`, Expression Trees",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/linq/standard-query-operators/",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/advanced-topics/expression-trees/"
+      ],
+      "expectedOutput": "a:5\nb:1"
+    },
+    {
+      "id": "S22",
+      "stageId": "cs_s22",
+      "phase": 5,
+      "title": "مدیریت استثناها و فیلترهای خطا",
+      "prerequisite": "S06",
+      "topics": "Exception Hierarchy, Exception Handling Best Practices, `throw;` vs `throw ex;`, Exception Filters (`when`)",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/standard/exceptions/best-practices-for-exceptions",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/exception-handling-statements"
+      ],
+      "expectedOutput": "invalid\nfinished"
+    },
+    {
+      "id": "S23",
+      "stageId": "cs_s23",
+      "phase": 5,
+      "title": "لاگینگ، ردیابی و Observability مدرن",
+      "prerequisite": "S22",
+      "topics": "`ILogger`, Structured Logging, Semantic Logging, EventSource, Activity & OpenTelemetry",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/logging",
+        "https://learn.microsoft.com/en-us/dotnet/core/diagnostics/distributed-tracing-instrumentation-walkthroughs"
+      ],
+      "expectedOutput": "True"
+    },
+    {
+      "id": "S24",
+      "stageId": "cs_s24",
+      "phase": 6,
+      "title": "ساختار حافظه CLR و چرخه حیات شیء",
+      "prerequisite": "S09",
+      "topics": "Object Header, MethodTable Pointer, SyncBlock Index, Stack vs Heap Allocation, Memory Alignment",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/fundamentals",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.gc.keepalive"
+      ],
+      "expectedOutput": "9,5\nInt32"
+    },
+    {
+      "id": "S25",
+      "stageId": "cs_s25",
+      "phase": 6,
+      "title": "زباله‌روب عمیق (.NET Garbage Collector)",
+      "prerequisite": "S24",
+      "topics": "Gen 0/1/2, LOH (Large Object Heap), POH (Pinned Object Heap), Server vs Workstation GC, Background GC",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/fundamentals",
+        "https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/large-object-heap"
+      ],
+      "expectedOutput": "4\n7"
+    },
+    {
+      "id": "S26",
+      "stageId": "cs_s26",
+      "phase": 6,
+      "title": "الگوی آزادسازی منابع غیرمدیریت‌شده (IDisposable)",
+      "prerequisite": "S25",
+      "topics": "`IDisposable`, `IAsyncDisposable`, Dispose Pattern, Finalizer (`~Class`), `GC.SuppressFinalize`",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose",
+        "https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-disposeasync"
+      ],
+      "expectedOutput": "1"
+    },
+    {
+      "id": "S27",
+      "stageId": "cs_s27",
+      "phase": 6,
+      "title": "برنامه‌نویسی High-Performance با Span و Memory",
+      "prerequisite": "S26",
+      "topics": "`Span<T>`, `ReadOnlySpan<T>`, `Memory<T>`, Zero-allocation Slicing, Stack-only safety",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/standard/memory-and-spans/",
+        "https://learn.microsoft.com/en-us/dotnet/standard/memory-and-spans/memory-t-usage-guidelines"
+      ],
+      "expectedOutput": "42"
+    },
+    {
+      "id": "S28",
+      "stageId": "cs_s28",
+      "phase": 6,
+      "title": "بهینه‌سازی پیشرفته حافظه و Ref Structs",
+      "prerequisite": "S27",
+      "topics": "`ref struct` (پیاده‌سازی اینترفیس در C# 13), `ArrayPool<T>`, `MemoryPool<T>`, `stackalloc`",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/system.buffers.arraypool-1",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/ref-struct"
+      ],
+      "expectedOutput": "9"
+    },
+    {
+      "id": "S29",
+      "stageId": "cs_s29",
+      "phase": 6,
+      "title": "برنامه‌نویسی ناامن (Unsafe & Native Interop)",
+      "prerequisite": "S28",
+      "topics": "`unsafe`, Pointers, `fixed`, P/Invoke, `Unsafe` class, Native Memory Management",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/unsafe-code",
+        "https://learn.microsoft.com/en-us/dotnet/standard/native-interop/best-practices"
+      ],
+      "expectedOutput": "7"
+    },
+    {
+      "id": "S30",
+      "stageId": "cs_s30",
+      "phase": 7,
+      "title": "مبانی تردها، ThreadPool و Synchronization",
+      "prerequisite": "S06",
+      "topics": "`Thread`, `ThreadPool`, Synchronization Primitives (`Monitor`, `Mutex`, `SemaphoreSlim`)",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/standard/threading/the-managed-thread-pool",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.semaphoreslim"
+      ],
+      "expectedOutput": "10"
+    },
+    {
+      "id": "S31",
+      "stageId": "cs_s31",
+      "phase": 7,
+      "title": "سینکرونایزیشن مدرن و قفل‌های بهینه",
+      "prerequisite": "S30",
+      "topics": "`lock`, کلمه کلیدی جدید `System.Threading.Lock` (در C# 13), `ReaderWriterLockSlim`",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/lock",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.readerwriterlockslim"
+      ],
+      "expectedOutput": "10000"
+    },
+    {
+      "id": "S32",
+      "stageId": "cs_s32",
+      "phase": 7,
+      "title": "برنامه‌نویسی بدون قفل (Lock-Free) و اتمیک",
+      "prerequisite": "S31",
+      "topics": "`Interlocked` class, Memory Barriers, CPU Cache Coherency, `Volatile` keyword",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.interlocked",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/volatile"
+      ],
+      "expectedOutput": "1"
+    },
+    {
+      "id": "S33",
+      "stageId": "cs_s33",
+      "phase": 7,
+      "title": "الگوی TAP و موتور درونی Async/Await",
+      "prerequisite": "S30",
+      "topics": "`Task`, `Task<T>`, `ValueTask<T>`, Async State Machine (`IAsyncStateMachine`), MoveNext",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.valuetask"
+      ],
+      "expectedOutput": "5"
+    },
+    {
+      "id": "S34",
+      "stageId": "cs_s34",
+      "phase": 7,
+      "title": "کانتکست‌ها و بهینه‌سازی Task در سرور و کلاینت",
+      "prerequisite": "S33",
+      "topics": "`SynchronizationContext`, `ExecutionContext`, `ConfigureAwait(false)`, Deadlocks",
+      "nodes": 7,
+      "sources": [
+        "https://devblogs.microsoft.com/dotnet/configureawait-faq/",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.executioncontext"
+      ],
+      "expectedOutput": "order-42"
+    },
+    {
+      "id": "S35",
+      "stageId": "cs_s35",
+      "phase": 7,
+      "title": "همزمانی پیشرفته: Channels و Reactive Patterns",
+      "prerequisite": "S33",
+      "topics": "`System.Threading.Channels` (Producer-Consumer بدون قفل), `Parallel.ForEachAsync`, PLINQ",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/channels",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.parallel.foreachasync"
+      ],
+      "expectedOutput": "15"
+    },
+    {
+      "id": "S36",
+      "stageId": "cs_s36",
+      "phase": 8,
+      "title": "ویژگی‌ها (Attributes) و Reflection عمیق",
+      "prerequisite": "S08",
+      "topics": "Custom Attributes, Metadata Inspection, Method Invocation, Dynamic Instantiation, Perf Penalties",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/advanced-topics/reflection-and-attributes/",
+        "https://learn.microsoft.com/en-us/dotnet/standard/reflection-and-emit/"
+      ],
+      "expectedOutput": "audit"
+    },
+    {
+      "id": "S37",
+      "stageId": "cs_s37",
+      "phase": 8,
+      "title": "Roslyn Source Generators و Native AOT",
+      "prerequisite": "S36",
+      "topics": "Roslyn Compiler API, Incremental Source Generators, Native AOT Readiness, Reflection-free Code",
+      "nodes": 7,
+      "sources": [
+        "https://github.com/dotnet/roslyn/blob/main/docs/features/incremental-generators.cookbook.md",
+        "https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/"
+      ],
+      "expectedOutput": "course-v1\nTrue"
+    },
+    {
+      "id": "S38",
+      "stageId": "cs_s38",
+      "phase": 9,
+      "title": "استریم‌ها، فایل‌ها و Pipelines با کارایی بالا",
+      "prerequisite": "S27",
+      "topics": "`Stream`, `FileStream`, `MemoryStream`, `System.IO.Pipelines` (Zero-copy network/disk I/O)",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/standard/io/",
+        "https://learn.microsoft.com/en-us/dotnet/standard/io/pipelines"
+      ],
+      "expectedOutput": "9"
+    },
+    {
+      "id": "S39",
+      "stageId": "cs_s39",
+      "phase": 9,
+      "title": "سریال‌سازی مدرن JSON و شبکه‌سازی ایمن",
+      "prerequisite": "S38",
+      "topics": "`System.Text.Json` (Source Generation), `HttpClientFactory`, Resilience (Polly), Sockets",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/source-generation",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/httpclient-factory"
+      ],
+      "expectedOutput": "42"
+    },
+    {
+      "id": "S40",
+      "stageId": "cs_s40",
+      "phase": 10,
+      "title": "اصول پنج‌گانه SOLID در پروژه‌های مدرن C#",
+      "prerequisite": "S08",
+      "topics": "Single Responsibility, Open-Closed, Liskov, Interface Segregation, Dependency Inversion در عمل",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/architectural-principles",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection/overview"
+      ],
+      "expectedOutput": "100\n50"
+    },
+    {
+      "id": "S41",
+      "stageId": "cs_s41",
+      "phase": 10,
+      "title": "الگوهای طراحی سازنده و ساختاری (Creational & Structural)",
+      "prerequisite": "S40",
+      "topics": "Factory Method, Abstract Factory, Builder, Singleton, Decorator, Adapter, Proxy",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures",
+        "https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/develop-asp-net-core-mvc-apps"
+      ],
+      "expectedOutput": "[HELLO]"
+    },
+    {
+      "id": "S42",
+      "stageId": "cs_s42",
+      "phase": 10,
+      "title": "الگوهای طراحی رفتاری (Behavioral Patterns)",
+      "prerequisite": "S41",
+      "topics": "Strategy, Observer, Mediator, Command, Chain of Responsibility",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/microservice-application-layer-implementation-web-api",
+        "https://learn.microsoft.com/en-us/dotnet/standard/events/observer-design-pattern"
+      ],
+      "expectedOutput": "15\n10"
+    },
+    {
+      "id": "S43",
+      "stageId": "cs_s43",
+      "phase": 10,
+      "title": "تزریق وابستگی عمیق (Dependency Injection)",
+      "prerequisite": "S40",
+      "topics": "`IServiceCollection`, Lifetimes (Transient, Scoped, Singleton), Captive Dependency Trap, Factory Pattern with DI",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection/overview",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection/guidelines"
+      ],
+      "expectedOutput": "True\nFalse"
+    },
+    {
+      "id": "S44",
+      "stageId": "cs_s44",
+      "phase": 10,
+      "title": "معماری تمیز، الگوهای Enterprise و آماده‌سازی مصاحبه معمار نرم‌افزار",
+      "prerequisite": "S43",
+      "topics": "Clean Architecture, CQRS, Vertical Slice, Repository/UnitOfWork Pros & Cons, Senior Assessment",
+      "nodes": 7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures",
+        "https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs"
+      ],
+      "expectedOutput": "Ada"
+    }
+  ]
+}

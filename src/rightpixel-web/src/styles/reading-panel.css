@@ -1,0 +1,277 @@
+/* Scene geometry never determines the amount of readable text. */
+main.playing #arena:not(:empty) {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) 104px;
+  gap: 10px;
+  min-height: 0;
+}
+#arena #challenge {
+  position: relative;
+  inset: auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  pointer-events: none;
+  direction: ltr;
+}
+#arena .speech {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  direction: rtl;
+}
+.speaker-heading {
+  padding: 8px 14px;
+  font-size: 16px;
+  border-bottom: 1px solid #405f53;
+}
+.speaker-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.speaker-heading canvas {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  image-rendering: pixelated;
+}
+.compact-stats {
+  display: none;
+  font-size: 14px;
+}
+#arena .speech-content {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+  padding: 0;
+  margin: 12px 16px;
+}
+.reading-pages {
+  height: 100%;
+  columns: auto;
+  column-width: auto;
+  column-count: 1;
+  column-gap: 24px;
+  column-fill: auto;
+  direction: rtl;
+}
+.reading-pages p {
+  margin-top: 0;
+  font-size: 18px;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+.reading-pages button,
+.reading-pages summary {
+  break-inside: avoid;
+  font-size: 16px;
+  min-height: 44px;
+}
+.reading-pages .player-choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+}
+.reading-pages .player-choices > button {
+  width: 100%;
+  margin: 0 !important;
+  overflow-wrap: anywhere;
+}
+.reading-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+}
+.reading-navigation span {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+.reading-navigation button {
+  min-height: 44px;
+  padding: 6px 12px;
+  font-size: 16px;
+}
+#arena .speech-actions {
+  overflow: visible;
+  max-height: none;
+  flex-shrink: 0;
+}
+#arena .speech::after {
+  display: none;
+}
+#arena .room-toolbar #room-title {
+  max-height: 56px;
+  overflow: auto;
+  font-size: 16px;
+  line-height: 1.7;
+}
+#arena .scene-hotspots {
+  bottom: 8px;
+}
+.code-view {
+  width: min(1100px, calc(100vw - 32px));
+  height: calc(100dvh - 32px);
+  max-height: none;
+  max-width: none;
+  padding: 0;
+  background: #101824;
+  color: #eef5ef;
+  border: 2px solid #80bfa1;
+}
+.code-view[open] {
+  display: flex;
+  flex-direction: column;
+}
+.code-view::backdrop {
+  background: #080f1bdd;
+}
+.code-view header {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+  margin: 0;
+  flex-shrink: 0;
+}
+.code-view-content {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 16px;
+}
+.code-view-content pre,
+.code-view-content .code-line {
+  max-height: none;
+  overflow: visible;
+  min-width: max-content;
+  font-size: 16px;
+}
+.code-view-content textarea {
+  max-height: none;
+  min-height: 50dvh;
+  font-size: 16px;
+}
+.code-preview {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.game-settings > div {
+  inset: 64px auto auto 12px;
+}
+summary:focus-visible,
+select:focus-visible {
+  outline: 2px solid #91edbb;
+  outline-offset: 3px;
+}
+.field-error,
+.auth-status {
+  font-size: 16px;
+}
+@media (max-width: 800px), (max-height: 650px) {
+  #arena #challenge {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  #arena #challenge[data-speaker='npc'] .player-speech,
+  #arena #challenge[data-speaker='player'] .npc-speech {
+    display: none;
+  }
+  #arena .speech-actions:has(> .show-choices:not([hidden]):only-child) {
+    display: flex;
+  }
+  .reading-pages .player-choices {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  #arena .question-again,
+  #arena .show-choices:not([hidden]) {
+    display: block;
+  }
+  .reading-pages p {
+    font-size: 16px;
+  }
+  main.playing .hud {
+    display: none;
+  }
+  .compact-stats {
+    display: inline;
+  }
+  main.playing #arena:not(:empty) {
+    grid-template-rows: auto minmax(0, 1fr) 88px;
+    gap: 6px;
+  }
+  .code-view {
+    width: 100%;
+    height: 100dvh;
+    margin: 0;
+  }
+}
+@media (max-height: 450px) {
+  main.playing {
+    height: calc(
+      100dvh - var(--game-header-height, 56px) - env(safe-area-inset-top) -
+        env(safe-area-inset-bottom)
+    );
+    min-height: 0;
+    overflow: hidden;
+  }
+  main.playing #arena:not(:empty) {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  #arena .scene-hotspots {
+    display: none;
+  }
+  .speaker-heading {
+    padding: 2px 10px;
+  }
+  .speaker-heading canvas {
+    width: 28px;
+    height: 28px;
+  }
+  #arena .speech-content {
+    margin: 4px 12px;
+  }
+  .room-notices:empty {
+    display: none;
+  }
+}
+
+#arena .npc-speech > #feedback {
+  position: static;
+  inset: auto;
+  flex-shrink: 0;
+  max-height: 40%;
+  overflow: auto;
+  margin: 0 12px;
+}
+#arena .npc-speech > #feedback > p {
+  margin: 6px 0;
+  font-size: 16px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+#arena .npc-speech > #feedback:not(:has(p:not(:empty))) {
+  display: none;
+}
+.code-view header {
+  align-items: center;
+  flex-wrap: wrap;
+}
+.code-view header #timer {
+  margin: 0;
+  font-size: 16px;
+}
+.code-view header button {
+  margin-inline-start: auto;
+}
+.code-preview.selected {
+  border-color: #91edbb;
+  background: #294f40;
+}

@@ -1,0 +1,350 @@
+#app {
+  min-height: 100dvh;
+  display: block;
+}
+aside {
+  width: 100%;
+  padding: 12px 20px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #303648;
+}
+aside > .eyebrow,
+.aside-footer,
+main > header,
+main > footer {
+  display: none;
+}
+nav {
+  display: flex;
+  gap: 8px;
+}
+nav a {
+  padding: 8px 12px;
+  font-size: 13px;
+}
+main {
+  max-width: none;
+  padding: 12px;
+  width: 100%;
+  min-width: 0;
+}
+.hud {
+  padding: 10px 16px;
+  gap: 12px;
+}
+.hud .identity {
+  width: auto;
+}
+.profile,
+.studio {
+  max-width: none;
+  margin-top: 12px;
+  padding: 16px;
+}
+form {
+  max-width: none;
+}
+.auth {
+  width: min(100% - 24px, 640px);
+  margin: 24px auto;
+  padding: 24px;
+}
+.avatar-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 8px;
+  max-height: 40dvh;
+  overflow: auto;
+  margin: 16px 0;
+  padding: 5px;
+}
+.avatar-picker button {
+  padding: 4px;
+  background: #202e40;
+  border: 2px solid transparent;
+}
+.avatar-picker button[aria-pressed='true'] {
+  border-color: #91edbb;
+  background: #324940;
+}
+.avatar-picker canvas {
+  display: block;
+  width: 64px;
+  height: 64px;
+  max-width: 100%;
+  image-rendering: pixelated;
+  margin: auto;
+}
+#arena {
+  position: relative;
+  min-height: calc(100dvh - 170px);
+}
+#arena canvas.dungeon-canvas {
+  min-height: 220px;
+  max-height: 42dvh;
+}
+#challenge {
+  background: #172431;
+  border: 2px solid #445b70;
+  padding: 16px;
+  border-radius: 4px;
+  position: relative;
+}
+#challenge > p {
+  color: #e2e9ed;
+}
+#challenge button {
+  margin: 4px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.dialogue-bubble {
+  cursor: pointer;
+  min-height: 80px;
+  font-size: 16px;
+  line-height: 2;
+  color: #eef5ef !important;
+  border: 2px solid #80bfa1;
+  padding: 16px;
+  background: #182d29;
+}
+pre,
+.code-line {
+  overflow: auto;
+  max-width: 100%;
+}
+main,
+#content,
+#map,
+.stage-rooms {
+  min-width: 0;
+}
+.stage-map {
+  margin: 8px 0;
+}
+.stage-rooms {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+}
+body {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+}
+@media (max-width: 650px) {
+  aside {
+    padding: 8px;
+    display: flex;
+  }
+  .brand {
+    font-size: 14px;
+  }
+  .brand-icon {
+    font-size: 24px;
+  }
+  nav {
+    margin: 0;
+  }
+  nav a {
+    font-size: 11px;
+    padding: 6px;
+  }
+  .hud {
+    gap: 8px;
+    padding: 8px;
+  }
+  .hud > div:not(.identity) {
+    min-width: 44px;
+  }
+  .hud small {
+    font-size: 10px;
+  }
+  .hud b {
+    font-size: 12px;
+  }
+  main {
+    padding: 8px;
+  }
+  #arena canvas.dungeon-canvas {
+    min-height: 150px;
+  }
+  #challenge {
+    padding: 8px;
+  }
+  .auth {
+    padding: 16px;
+  }
+  .profile,
+  .studio {
+    padding: 10px;
+  }
+}
+
+.game-map {
+  padding: 12px;
+}
+#arena:not(:empty) {
+  isolation: isolate;
+  padding: 16px 16px 170px;
+  min-height: calc(100dvh - 150px);
+  border: 2px solid #40576c;
+}
+#arena > .dungeon-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  aspect-ratio: auto;
+  z-index: -1;
+  border: 0;
+  pointer-events: none;
+}
+#arena > #room-title,
+#arena > #npc,
+#arena > #timer {
+  width: fit-content;
+  background: #101d2ae8;
+  padding: 4px 12px;
+  margin: 5px 0;
+}
+#challenge {
+  max-width: 1000px;
+  margin-inline: auto;
+  background: #102229ed;
+  box-shadow: 0 5px 0 #080f1b80;
+}
+#room-navigation,
+#shop,
+#feedback {
+  position: relative;
+  z-index: 1;
+}
+#shop {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+#feedback > p {
+  background: #172a30ed;
+}
+.pilot-board {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-height: 62px;
+  border: 2px dashed #79b59d;
+  padding: 10px;
+  margin: 14px 0;
+}
+.pilot-board > div {
+  padding: 8px;
+  background: #253b49;
+}
+.pilot-board strong {
+  display: block;
+  direction: ltr;
+}
+.pilot-board button[aria-pressed='true'] {
+  outline: 3px solid #e7c578;
+}
+.game-settings {
+  position: relative;
+}
+.game-settings > div {
+  position: absolute;
+  z-index: 10;
+  inset-inline-end: 0;
+  width: min(88vw, 340px);
+  padding: 12px;
+  background: #15232f;
+  border: 1px solid #91edbb;
+}
+.game-settings > button {
+  font-size: 12px;
+  padding: 4px 10px;
+}
+.game-settings summary {
+  cursor: pointer;
+  padding: 8px;
+}
+@media (max-width: 650px) {
+  .game-map {
+    padding: 6px;
+  }
+  #arena:not(:empty) {
+    padding: 8px 8px 130px;
+    min-height: calc(100dvh - 160px);
+  }
+  #arena > .dungeon-canvas {
+    min-height: 0;
+  }
+  #challenge {
+    max-width: 100%;
+  }
+  .dialogue-bubble {
+    font-size: 14px;
+    padding: 10px;
+  }
+  #shop button {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+}
+
+.scene-hotspots {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 20px;
+  display: flex;
+  align-items: end;
+  justify-content: space-around;
+  gap: 8px;
+  padding: 0 8px;
+}
+.scene-hotspots button {
+  font-size: 12px;
+  padding: 8px 12px;
+  background: #1d302ed9;
+  color: #c9ecd9;
+  border: 1px solid #74a68d;
+  min-height: 44px;
+}
+.door-hotspot {
+  order: 2;
+}
+.npc-hotspot {
+  order: 3;
+}
+.chest-hotspot {
+  order: 1;
+}
+.pilot-board button {
+  animation: token-arrival 0.15s ease-out;
+}
+@keyframes token-arrival {
+  from {
+    opacity: 0.5;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#arena canvas.dungeon-canvas {
+  max-height: none;
+  min-height: 0;
+}
+#arena:not(:empty) {
+  padding-bottom: 120px;
+  min-height: calc(100dvh - 190px);
+}
+@media (max-width: 650px) {
+  #arena:not(:empty) {
+    padding-bottom: 110px;
+    min-height: calc(100dvh - 220px);
+  }
+}

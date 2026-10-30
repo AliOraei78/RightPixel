@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+psql --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" --set=app_password="$RIGHTPIXEL_DB_PASSWORD" <<'SQL'
+CREATE ROLE rightpixel LOGIN PASSWORD :'app_password';
+GRANT CONNECT ON DATABASE rightpixel TO rightpixel;
+GRANT USAGE ON SCHEMA public TO rightpixel;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO rightpixel;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO rightpixel;
+SQL

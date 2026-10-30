@@ -1,0 +1,193 @@
+{
+  "version": 1,
+  "world": {
+    "id": "qa-world",
+    "title": "قلمرو آزمون رابط",
+    "icon": "",
+    "color": "cyan",
+    "sortOrder": 0
+  },
+  "stages": [
+    {
+      "id": "qa-stage",
+      "worldId": "qa-world",
+      "title": "مرحلهٔ شش بازی",
+      "stageNumber": 1,
+      "bossName": "",
+      "nodes": [
+        {
+          "id": "qa-lore",
+          "stageId": "qa-stage",
+          "sortOrder": 0,
+          "type": "dialogue_lore",
+          "title": "۱. کتیبه",
+          "npcName": "راهنمای آزمون",
+          "npcSprite": "wizard",
+          "xpReward": 50,
+          "timeLimitSec": null,
+          "hint": "راهنمای آزمایشی",
+          "explanation": "پاسخ آزمایشی ثبت شد.",
+          "payload": {
+            "dialogues": [
+              "گفت‌وگوی نخست",
+              "گفت‌وگوی دوم"
+            ],
+            "keyTakeaway": "نکتهٔ کتیبه"
+          }
+        },
+        {
+          "id": "qa-who",
+          "stageId": "qa-stage",
+          "sortOrder": 1,
+          "type": "who_am_i",
+          "title": "۲. کارآگاه",
+          "npcName": "راهنمای آزمون",
+          "npcSprite": "riddler",
+          "xpReward": 50,
+          "timeLimitSec": null,
+          "hint": "راهنمای آزمایشی",
+          "explanation": "پاسخ آزمایشی ثبت شد.",
+          "payload": {
+            "clues": [
+              "سرنخ نخست",
+              "سرنخ دوم"
+            ],
+            "options": [
+              "پاسخ درست",
+              "پاسخ نادرست"
+            ],
+            "correctAnswer": "پاسخ درست"
+          }
+        },
+        {
+          "id": "qa-bug",
+          "stageId": "qa-stage",
+          "sortOrder": 2,
+          "type": "bug_sniper",
+          "title": "۳. شکار باگ",
+          "npcName": "راهنمای آزمون",
+          "npcSprite": "goblin",
+          "xpReward": 50,
+          "timeLimitSec": null,
+          "hint": "راهنمای آزمایشی",
+          "explanation": "پاسخ آزمایشی ثبت شد.",
+          "payload": {
+            "prompt": "خط دوم را اصلاح کن.",
+            "codeLines": [
+              "int score = 0;",
+              "score = -1;"
+            ],
+            "buggyLineIndex": 1,
+            "fixOptions": [
+              "اصلاح درست",
+              "اصلاح نادرست"
+            ],
+            "correctFixIndex": 0
+          }
+        },
+        {
+          "id": "qa-bomb",
+          "stageId": "qa-stage",
+          "sortOrder": 3,
+          "type": "bomb_defusal",
+          "title": "۴. بمب",
+          "npcName": "راهنمای آزمون",
+          "npcSprite": "bomb",
+          "xpReward": 50,
+          "timeLimitSec": 600,
+          "hint": "راهنمای آزمایشی",
+          "explanation": "پاسخ آزمایشی ثبت شد.",
+          "payload": {
+            "prompt": "عدد 100 را در جای خالی قرار بده.",
+            "codeTemplate": "int hp = __1__;",
+            "blanks": [
+              "100"
+            ],
+            "tokenBank": [
+              "100",
+              "50"
+            ]
+          }
+        },
+        {
+          "id": "qa-judge",
+          "stageId": "qa-stage",
+          "sortOrder": 4,
+          "type": "compiler_judge",
+          "title": "۵. قاضی",
+          "npcName": "راهنمای آزمون",
+          "npcSprite": "boss",
+          "xpReward": 50,
+          "timeLimitSec": null,
+          "hint": "راهنمای آزمایشی",
+          "explanation": "پاسخ آزمایشی ثبت شد.",
+          "payload": {
+            "prompt": "خروجی را قضاوت کن.",
+            "codeSnippet": "Console.WriteLine(2 + 2);",
+            "claimedOutput": "4",
+            "verdictOptions": [
+              "تأیید خروجی",
+              "رد خروجی"
+            ],
+            "correctVerdictIndex": 0
+          }
+        },
+        {
+          "id": "qa-puzzle",
+          "stageId": "qa-stage",
+          "sortOrder": 5,
+          "type": "code_puzzle",
+          "title": "۶. پازل",
+          "npcName": "راهنمای آزمون",
+          "npcSprite": "riddler",
+          "xpReward": 50,
+          "timeLimitSec": null,
+          "hint": "راهنمای آزمایشی",
+          "explanation": "پاسخ آزمایشی ثبت شد.",
+          "payload": {
+            "prompt": "متد را بدون خط تله مرتب کن.",
+            "scrambledLines": [
+              "return 1;",
+              "trap();",
+              "int Test() {",
+              "}"
+            ],
+            "correctOrderIndices": [
+              2,
+              0,
+              3
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "qa-final-stage",
+      "worldId": "qa-world",
+      "title": "مرحلهٔ پایانی",
+      "stageNumber": 2,
+      "bossName": "",
+      "nodes": [
+        {
+          "id": "qa-end",
+          "stageId": "qa-final-stage",
+          "sortOrder": 0,
+          "type": "dialogue_lore",
+          "title": "۷. پایان مسیر",
+          "npcName": "راهنمای آزمون",
+          "npcSprite": "wizard",
+          "xpReward": 50,
+          "timeLimitSec": null,
+          "hint": "راهنمای آزمایشی",
+          "explanation": "پاسخ آزمایشی ثبت شد.",
+          "payload": {
+            "dialogues": [
+              "پایان آزمون"
+            ],
+            "keyTakeaway": "تمام"
+          }
+        }
+      ]
+    }
+  ]
+}

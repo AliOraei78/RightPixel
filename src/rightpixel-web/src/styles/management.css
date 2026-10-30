@@ -1,0 +1,50 @@
+.actions {
+  flex-wrap: wrap;
+}
+select {
+  font: inherit;
+  width: 100%;
+  padding: 12px;
+  background: #10141e;
+  color: #e2e5ef;
+  border: 1px solid #3b455c;
+  margin-bottom: 16px;
+}
+.content-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 0;
+  border-bottom: 1px solid #303648;
+}
+.content-stage {
+  padding-right: 12px;
+}
+.content-node {
+  padding-right: 24px;
+}
+.content-row button {
+  font-size: 12px;
+  padding: 7px 12px;
+}
+.confirm {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.confirm input {
+  width: auto;
+  margin: 6px 0;
+  flex-shrink: 0;
+}
+#studio-status,
+#backup-status {
+  overflow-wrap: anywhere;
+}
+#backup-json,
+#pack {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+}

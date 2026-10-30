@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RightPixel.Domain/RightPixel.Domain.csproj" />
+<Project Path="src/RightPixel.Application/RightPixel.Application.csproj" />
+<Project Path="src/RightPixel.Infrastructure/RightPixel.Infrastructure.csproj" />
+<Project Path="src/RightPixel.Api/RightPixel.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RightPixel.Api.Tests/RightPixel.Api.Tests.csproj" />
+  </Folder>
+</Solution>

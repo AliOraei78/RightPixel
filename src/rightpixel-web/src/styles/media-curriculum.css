@@ -1,0 +1,173 @@
+.player-avatar {
+  display: block;
+  width: 48px;
+  height: 44px;
+  max-height: none;
+  padding: 0;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+.level-progress {
+  width: 125px;
+  max-width: 100%;
+  height: 5px;
+  accent-color: #91edbb;
+  background: #263349;
+  border: 0;
+}
+.level-progress::-webkit-progress-bar {
+  background: #263349;
+}
+.level-progress::-webkit-progress-value {
+  background: #91edbb;
+}
+.level-progress::-moz-progress-bar {
+  background: #91edbb;
+}
+.dungeon-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  aspect-ratio: 32/11;
+  border: 2px solid #3b4c65;
+  border-bottom: 5px solid #3b4c65;
+  image-rendering: pixelated;
+  background: #111925;
+}
+#arena[data-result='win'] .dungeon-canvas {
+  border-color: #6ebc9a;
+}
+#arena[data-result='fail'] .dungeon-canvas {
+  border-color: #b57485;
+}
+#feedback > p:not(:empty) {
+  padding: 14px 18px;
+  background: #1c2930;
+  border-right: 3px solid #91edbb;
+  color: #dcece4;
+}
+#arena[data-result='fail'] #feedback > p {
+  background: #30212d;
+  border-color: #d78694;
+}
+.level-banner {
+  padding: 14px 18px;
+  background: #302d23;
+  color: #f5d18b;
+  border: 1px solid #aa8d52;
+  animation: level-arrival 0.3s ease-out;
+}
+.level-banner[hidden] {
+  display: none;
+}
+.media-settings input[type='range'] {
+  padding: 0;
+  accent-color: #91edbb;
+  height: 24px;
+}
+.media-settings output {
+  color: #91edbb;
+  margin-inline-start: 10px;
+}
+.media-settings select {
+  margin-top: 8px;
+}
+html[data-motion='reduced'] * {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+@keyframes level-arrival {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.stage-map {
+  margin: 12px 0;
+  border: 1px solid #35415a;
+  background: #121824;
+  padding: 14px;
+}
+.stage-map > summary {
+  cursor: pointer;
+  line-height: 1.9;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.stage-map > small {
+  display: block;
+  color: #9baac3;
+  margin: 8px 0;
+}
+.stage-rooms {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 6px;
+}
+.stage-rooms button {
+  text-align: right;
+  margin: 0 !important;
+  width: 100%;
+  font-size: 12px;
+}
+.learning-sources,
+.workshop {
+  border: 1px solid #3b455c;
+  padding: 14px;
+  margin: 18px 0;
+}
+.learning-sources summary,
+.workshop summary {
+  cursor: pointer;
+  line-height: 1.9;
+  color: #bde7d0;
+}
+.learning-sources a {
+  display: block;
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+}
+.workshop-editor {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  min-height: 240px;
+  tab-size: 4;
+}
+.workshop li {
+  color: #b8c4da;
+  line-height: 1.9;
+  font-size: 13px;
+}
+.lesson-topics {
+  overflow-wrap: anywhere;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+}
+.button-link {
+  display: inline-block;
+  background: #91edbb;
+  color: #12251d;
+  padding: 10px 20px;
+  border-bottom: 4px solid #4c996d;
+  font-size: 13px;
+  font-weight: 700;
+}
+.stage-map[hidden] {
+  display: none;
+}
+#challenge pre {
+  max-height: 450px;
+  overflow: auto;
+}
+#challenge .workshop {
+  width: 100%;
+  min-width: 0;
+}

@@ -1,0 +1,32 @@
+{
+  "name": "rightpixel-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test:media": "tsc -p tsconfig.media-tests.json && node --test tests/media.test.mjs",
+    "test": "npm run test:media",
+    "test:e2e": "playwright test",
+    "test:e2e:chrome": "playwright test --project=chrome-desktop --project=chrome-mobile",
+    "lint": "eslint src",
+    "format": "prettier --write src",
+    "format:check": "prettier --check src"
+  },
+  "keywords": [],
+  "type": "module",
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "eslint": "^10.13.0",
+    "prettier": "^3.9.10",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5"
+  },
+  "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/vazirmatn": "^5.3.0"
+  }
+}

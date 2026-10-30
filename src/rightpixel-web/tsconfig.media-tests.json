@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noEmit": false,
+    "rootDir": "./src",
+    "outDir": "./.media-tests"
+  },
+  "include": [
+    "src/infrastructure/media/**/*.ts", "src/ui/persian-copy.ts"
+  ]
+}
