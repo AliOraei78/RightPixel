@@ -1,18 +1,66 @@
+# Dependencies and build output
 **/bin/
 **/obj/
 **/node_modules/
 **/dist/
-**/App_Data/
-.vs/
-*.user
+**/*.tsbuildinfo
 
-rightpixel-backup.db*
+# Local configuration and credentials
 .env
+.env.*
+!.env.example
+!.env.*.example
+appsettings.Local.json
+appsettings.*.Local.json
+secrets.json
+*.pfx
+*.p12
+*.pem
+*.key
 
+# Runtime data and backups
+rightpixel-backup.db*
+**/App_Data/
+**/DataProtection-Keys/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.sqlite-shm
+*.sqlite-wal
+*.sqlite3-shm
+*.sqlite3-wal
+*.dump
+*.backup
+*.bak
+backups/
+
+# Test output and caches
 **/.media-tests/
 **/test-results/
 **/playwright-report/
-**/__pycache__/
+**/blob-report/
+**/TestResults/
+**/coverage/
+**/.nyc_output/
 **/.course-checks/
 **/.e2e-data/
-backups/
+**/.cache/
+**/.vite/
+**/__pycache__/
+*.py[cod]
+*.log
+*.tmp
+*.temp
+
+# Machine-specific editor and OS state
+.vs/
+.idea/
+.codex/
+*.user
+*.suo
+*.sln.docstates
+.DS_Store
+Thumbs.db
+Desktop.ini
