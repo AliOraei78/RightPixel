@@ -61,19 +61,19 @@ form {
   margin: 16px 0;
   padding: 5px;
 }
-.avatar-picker button {
+.avatar-grid button {
   padding: 4px;
   background: #202e40;
   border: 2px solid transparent;
 }
-.avatar-picker button[aria-pressed='true'] {
+.avatar-grid button[aria-pressed='true'] {
   border-color: #91edbb;
   background: #324940;
 }
 .avatar-picker canvas {
   display: block;
   width: 64px;
-  height: 64px;
+  height: auto;
   max-width: 100%;
   image-rendering: pixelated;
   margin: auto;

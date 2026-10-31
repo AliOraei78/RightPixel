@@ -53,6 +53,43 @@ public class ApplicationUnitTests
 
     }
     [Fact]
+    public async Task CompletedBossReplaysAllRoundsWithoutRepeatingRewards()
+    {
+        var data = new MemoryWorkspace();
+        var current = new Current();
+        data.PlayerProfiles.Add(new() { Id = current.Id });
+        data.AllWorlds.Add(new() { Id = "w" });
+        data.AllStages.Add(new() { Id = "s", WorldId = "w", StageNumber = 1 });
+        data.AllNodes.Add(new()
+        {
+            Id = "boss", StageId = "s", Type = NodeType.boss_fight, XpReward = 25,
+            PayloadJson = JsonSerializer.Serialize(new { rounds = Enumerable.Range(0, 3).Select(_ => new {
+                type = "who_am_i", payload = new { clues = new[] { "lesson" }, options = new[] { "a" }, correctAnswer = "a" }
+            }) })
+        });
+        var player = new PlayerService(data, current);
+        var service = new PlayService(data, player, new Clock(), current);
+        for (var play = 0; play < 2; play++)
+        {
+            for (var round = 0; round < 3; round++)
+            {
+                var start = JsonSerializer.SerializeToElement((await service.Start("boss")).Value, DataJson.Options);
+                Assert.Equal(round, start.GetProperty("roundIndex").GetInt32());
+                var resume = JsonSerializer.SerializeToElement((await service.Start("boss")).Value, DataJson.Options);
+                Assert.Equal(start.GetProperty("attemptId").GetGuid(), resume.GetProperty("attemptId").GetGuid());
+                Assert.Equal(round, resume.GetProperty("roundIndex").GetInt32());
+                var result = JsonSerializer.SerializeToElement((await service.Answer("boss", new(
+                    start.GetProperty("attemptId").GetGuid(), JsonSerializer.SerializeToElement("a")))).Value, DataJson.Options);
+                Assert.True(result.GetProperty("correct").GetBoolean());
+                Assert.Equal(round == 2, result.GetProperty("nodeCompleted").GetBoolean());
+                if (play == 1) Assert.Equal(0, result.GetProperty("earnedXp").GetInt32());
+            }
+            Assert.Equal(0, Assert.Single(data.PlayerCheckpoints).BossRound);
+            Assert.Equal("{}", Assert.Single(data.PlayerCheckpoints).StateJson);
+            Assert.Equal(25, (await player.Read()).Xp);
+        }
+    }
+    [Fact]
     public void PublicCluesOnlyContainUnlockedText()
     {
         var data=new MemoryWorkspace();var current=new Current();

@@ -1,5 +1,5 @@
 import { mountArena } from '../gameplay/arena';
-import type { GameNode, PlayerState } from '../../core/contracts';
+import type { GameNode, PlayerState, Stage } from '../../core/contracts';
 import type { GameGateway } from '../../core/ports';
 export function createDungeonFeature() {
   let cleanup = () => {},
@@ -16,6 +16,7 @@ export function createDungeonFeature() {
     state: PlayerState,
     _refresh: () => Promise<void>,
     onState: (s: PlayerState) => void,
+    reviewing = false,
   ) {
     dispose();
     const version = generation;
@@ -36,12 +37,53 @@ export function createDungeonFeature() {
       state = updated;
       onState(updated);
     };
-    const open = async (id: string) => {
-      cleanup();
+    const stages: Stage[] = [];
+    let opening = false;
+    const open = async (id: string, updateHistory = false) => {
+      if (opening) return;
+      opening = true;
       map.hidden = true;
       try {
         const node = await store.getNode(id);
         if (!alive()) return;
+        let review;
+        if (reviewing) {
+          const completed = new Set(
+            state.completedNodes.filter((p) => p.completedAt).map((p) => p.nodeId),
+          );
+          if (!completed.has(id)) throw new Error('این قسمت هنوز تکمیل نشده.');
+          const stage = stages.find((stage) => stage.id === node.stageId);
+          const phase = stage?.title.match(/فاز [۰-۹0-9]+/)?.[0];
+          const phaseStages = stages.filter(
+            (candidate) =>
+              candidate.worldId === stage?.worldId &&
+              (phase
+                ? candidate.title.match(/فاز [۰-۹0-9]+/)?.[0] === phase
+                : candidate.id === stage?.id),
+          );
+          const rooms = (
+            await Promise.all(
+              phaseStages
+                .sort((a, b) => a.stageNumber - b.stageNumber)
+                .map((stage) => store.getNodes(stage.id)),
+            )
+          )
+            .flat()
+            .filter((room) => completed.has(room.id));
+          if (!alive()) return;
+          const index = rooms.findIndex((room) => room.id === id);
+          review = {
+            phase: phase ?? 'درس',
+            checkpoint: await store.checkpoint(id),
+            previous: rooms[index - 1],
+            next: rooms[index + 1],
+            navigate: (id: string) => {
+              void open(id, true);
+            },
+          };
+        }
+        if (!alive()) return;
+        cleanup();
         cleanup = await mountArena(
           arena,
           node,
@@ -55,10 +97,15 @@ export function createDungeonFeature() {
             location.hash = '/dungeon';
           },
           alive,
+          review,
         );
+        if (updateHistory && alive())
+          history.pushState(null, '', '#/review/' + encodeURIComponent(id));
       } catch (e) {
-        map.hidden = false;
+        if (!arena.childElementCount) map.hidden = false;
         error(e);
+      } finally {
+        opening = false;
       }
     };
     async function rebuild() {
@@ -77,6 +124,7 @@ export function createDungeonFeature() {
       const worlds = await store.getWorlds();
       for (const world of worlds) {
         for (const stage of await store.getStages(world.id)) {
+          stages.push(stage);
           if (!alive()) return;
           const details = document.createElement('details');
           details.className = 'stage-map';
@@ -119,7 +167,7 @@ export function createDungeonFeature() {
                   (room.isLocked ? '🔒 قفل · ' : completed ? '✓ تمام‌شده · ' : '◇ جاری · ') +
                   room.title;
                 b.onclick = () => {
-                  location.hash = '/play/' + encodeURIComponent(room.id);
+                  location.hash = (completed ? '/review/' : '/play/') + encodeURIComponent(room.id);
                 };
                 grid.append(b);
               }

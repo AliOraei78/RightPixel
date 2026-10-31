@@ -31,13 +31,14 @@ export function renderBugSniper(
     if (index >= 0 && index < payload.codeLines.length)
       context.workspace.querySelectorAll<HTMLButtonElement>('.code-line')[index]?.click();
   }
-  payload.fixOptions.forEach((text, i) =>
-    button(
-      text,
-      () => {
-        void submit({ line, fix: i });
-      },
-      fixes,
-    ),
+  payload.fixOptions.forEach(
+    (text, i) =>
+      (button(
+        text,
+        () => {
+          void submit({ line, fix: i });
+        },
+        fixes,
+      ).disabled = !!context.reviewing),
   );
 }

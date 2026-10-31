@@ -14,9 +14,10 @@ export function renderCompilerJudge(
   pre.textContent = payload.codeSnippet;
   challenge.append(pre);
   paragraph(payload.claimedOutput);
-  payload.verdictOptions.forEach((text, i) =>
-    button(text, () => {
-      void submit(i);
-    }),
+  payload.verdictOptions.forEach(
+    (text, i) =>
+      (button(text, () => {
+        void submit(i);
+      }).disabled = !!context.reviewing),
   );
 }

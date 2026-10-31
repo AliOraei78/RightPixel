@@ -9,6 +9,7 @@ import sys
 import zipfile
 from pathlib import Path
 from catalog import SESSIONS
+from study_notes import STUDY_NOTES, QUESTION_GUIDES
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
@@ -96,17 +97,17 @@ for authored, row in zip(SESSIONS, rows):
     code, claim, valid, explanation = authored['judge']
     node('compiler_judge', 3, f'{sid} · مصاحبه ۳: داور کامپایلر', dict(prompt='با فرض C# 13، .NET 10 و usingهای لازم، ادعای زیر را بررسی کن.',
          codeSnippet=code, claimedOutput=claim, verdictOptions=['ادعا درست است', 'ادعا نادرست است'], correctVerdictIndex=0 if valid else 1), explanation,
-         'ابتدا خطای کامپایل، سپس رفتار runtime و در آخر مقدار خروجی را بررسی کن.', 85)
+         'اول بررسی کن کد قابل ساختن هست یا نه؛ بعد مقدارها را خط‌به‌خط دنبال کن و خروجی را به دست بیاور.', 85)
     prompt, lines, index, fix, wrong, explanation = authored['bug']
     fixes = [fix, wrong]
     rng.shuffle(fixes)
     node('bug_sniper', 4, f'{sid} · مصاحبه ۴: شکار باگ', dict(prompt=prompt, codeLines=lines, buggyLineIndex=index, fixOptions=fixes, correctFixIndex=fixes.index(fix)),
-         explanation, 'متن مسئله قرارداد مطلوب را مشخص می‌کند؛ اصلاح باید همان قرارداد را برقرار کند.', 85)
+         explanation, 'بخوان برنامه باید چه کاری انجام دهد؛ سپس خطی را پیدا کن که مانع همان کار می‌شود.', 85)
     prompt, template, blanks, distractors, explanation = authored['bomb']
     bank = list(dict.fromkeys(blanks + distractors))
     rng.shuffle(bank)
     node('bomb_defusal', 5, f'{sid} · مصاحبه ۵: تکمیل کد', dict(prompt=prompt, codeTemplate=template, blanks=blanks, tokenBank=bank),
-         explanation, 'هر جای خالی را با توجه به نوع عبارت و قرارداد عملیات پر کن.', 90, 240)
+         explanation, 'برای هر جای خالی، نوع داده و کاری را که باید انجام شود بررسی کن.', 90, 240)
     task, blocks, expected, rubric = authored['workshop']
     solution = '\n\n'.join(blocks) + '\n'
     starter = f'// {sid}: {title.strip()}\n// {task}\n// Target: .NET 10 / C# 13\n// TODO: implement the task. See README.md for acceptance criteria.\nthrow new NotImplementedException("{sid}");\n'
@@ -159,6 +160,18 @@ dotnet run --project Workshop.csproj
 from pilot import add_pilot
 add_pilot(pack, manifest)
 
+for stage in pack['stages']:
+    number = stage['stageNumber']
+    for room in stage['nodes']:
+        if room['type'] == 'dialogue_lore':
+            continue
+        room['payload']['learningNote'] = STUDY_NOTES[number] + [QUESTION_GUIDES[room['type']]]
+        if room['type'] == 'boss_fight':
+            for round in room['payload']['rounds']:
+                topic = {'runtime_forge': 1, 'memory_mirror': 2, 'compiler_judge': 5}[round['type']]
+                round['payload']['learningNote'] = STUDY_NOTES[topic] + [QUESTION_GUIDES[round['type']]]
+        assert 1 <= len(room['payload']['learningNote']) <= 3
+
 packed = json.dumps(pack, ensure_ascii=False, indent=2) + '\n'
 write(HERE / 'generated/csharp-mastery.json', packed)
 write(HERE / 'manifest.json', json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
@@ -175,9 +188,11 @@ write(HERE / 'workshops/WorkshopRunner.csproj', '''<Project Sdk="Microsoft.NET.S
 index = '# محتوای C#\n\n۴۴ جلسه مطابق سند اصلی؛ هر جلسه ۱ درس + ۵ مصاحبه + ۱ کارگاه.\n\n| جلسه | فاز | عنوان | پیش‌نیاز |\n|---|---|---|---|\n'
 for s in manifest['sessions']:
     index += f"| {s['id']} | {s['phase']} | {s['title']} | {s['prerequisite']} |\n"
-index += '\nمتن‌های آموزشی و پاسخ‌ها تألیفی‌اند؛ پیوند منابع رسمی در manifest و خود اتاق درس/کارگاه آمده است. کد مرجع هر ۴۴ کارگاه با .NET 10 و C# 13 قابل اجراست. جلسهٔ S37 analyzer واقعی همراه دارد.\n\n'
+index += '\n۴۴ درس با توضیح‌های کوتاه و مثال ساده بازنویسی شده‌اند. متن ۸۸ سؤال مفهومی نیز ساده‌تر شده است. برای هر ۲۶۸ سؤال، آموزش کوتاهِ دکمهٔ «؟» در study_notes.py نوشته شده؛ این متن‌ها گزینهٔ درست یا حلِ ورودی همان سؤال را نمایش نمی‌دهند.\n\n'
+index += 'متن‌های آموزشی و پاسخ‌ها تألیفی‌اند؛ منابع رسمی در manifest و بخش کارگاه نگه داشته شده‌اند. کد مرجع هر ۴۴ کارگاه با .NET 10 و C# 13 قابل اجراست. جلسهٔ S37 analyzer واقعی همراه دارد.\n\n'
 index += 'بستهٔ بازی در content/csharp/generated/csharp-mastery.json و نسخه‌های قابل دریافت کارگاه در Content/Workshops قرار دارند. کد مرجع و starter جدا هستند.\n\nساخت بسته: `python content/csharp/build_course.py`؛ بررسی همسانی خروجی: `python content/csharp/build_course.py --check`؛ اجرای همهٔ کارگاه‌ها: `python content/csharp/check_workshops.py`.\n\n'
 index += 'اجرای یک پاسخ مرجع: `dotnet run --project content/csharp/workshops/WorkshopRunner.csproj -p:Session=S01`. برای تمرین، ZIP همان جلسه را از بازی بگیر و Program.cs را کامل کن. مقایسهٔ خروجی، صحت همهٔ ورودی‌ها یا کیفیت طراحی را ثابت نمی‌کند؛ rubric را هم بررسی کن.\n'
+index += '\nبررسی متن درس‌ها و یادآوری‌های آموزشی: `python content/csharp/check_learning.py`. این بررسی، کوتاه‌بودن متن‌ها، پوشش همهٔ سؤال‌ها و نبودن پاسخ مستقیم سؤال‌های مفهومی در یادآوری‌ها را کنترل می‌کند.\n'
 write(HERE / 'README.md', index)
 assert len(pack['stages']) == 44 and sum(len(s['nodes']) for s in pack['stages']) == 312
 assert len(packed.encode('utf-8')) < 2_000_000

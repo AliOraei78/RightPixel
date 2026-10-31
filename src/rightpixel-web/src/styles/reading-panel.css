@@ -1,9 +1,42 @@
 /* Scene geometry never determines the amount of readable text. */
 main.playing #arena:not(:empty) {
+  --reading-height: 320px;
+  --stage-height: clamp(176px, 20dvh, 224px);
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) 104px;
+  grid-template-rows: auto minmax(var(--reading-height), 1fr) var(--stage-height) auto;
   gap: 10px;
-  min-height: 0;
+  /* Reserve a separate stage so dialogue can never cover either character. */
+  min-height: calc(
+    var(--room-header-height, 80px) + var(--reading-height) + var(--stage-height) +
+      var(--scene-controls-height, 44px) + 46px
+  );
+}
+main.playing .hud {
+  padding: 8px 16px;
+}
+.room-toolbar {
+  grid-row: 1;
+}
+.review-navigation {
+  grid-column: 1 / -1;
+  width: min(100%, 680px);
+  justify-self: center;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  direction: rtl;
+  gap: 8px;
+}
+.review-navigation p {
+  grid-column: 1 / -1;
+  margin: 0;
+  text-align: center;
+  font-size: 16px;
+}
+.review-navigation button {
+  min-height: 44px;
+  font-size: 16px;
+  padding: 8px;
+  overflow-wrap: anywhere;
 }
 #arena #challenge {
   position: relative;
@@ -12,8 +45,18 @@ main.playing #arena:not(:empty) {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
+  grid-row: 2;
+  width: min(100%, 1280px);
+  max-height: 360px;
+  justify-self: center;
+  align-self: end;
+  height: 100%;
   pointer-events: none;
   direction: ltr;
+}
+#arena #challenge:has(> .player-speech[hidden]) {
+  grid-template-columns: minmax(0, 680px);
+  justify-content: center;
 }
 #arena .speech {
   position: relative;
@@ -22,6 +65,7 @@ main.playing #arena:not(:empty) {
   height: 100%;
   max-height: none;
   min-height: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   direction: rtl;
@@ -41,6 +85,10 @@ main.playing #arena:not(:empty) {
   height: 40px;
   flex-shrink: 0;
   image-rendering: pixelated;
+}
+.speaker-heading span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .compact-stats {
   display: none;
@@ -63,6 +111,16 @@ main.playing #arena:not(:empty) {
   column-fill: auto;
   direction: rtl;
 }
+#arena .continuous-reading {
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+.continuous-reading .reading-pages {
+  height: auto;
+  min-height: 100%;
+  columns: auto;
+}
 .reading-pages p {
   margin-top: 0;
   font-size: 18px;
@@ -77,7 +135,7 @@ main.playing #arena:not(:empty) {
 }
 .reading-pages .player-choices {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   align-content: start;
 }
 .reading-pages .player-choices > button {
@@ -106,6 +164,9 @@ main.playing #arena:not(:empty) {
   max-height: none;
   flex-shrink: 0;
 }
+#arena[data-result] .npc-speech .speech-actions > button {
+  display: none;
+}
 #arena .speech::after {
   display: none;
 }
@@ -116,7 +177,9 @@ main.playing #arena:not(:empty) {
   line-height: 1.7;
 }
 #arena .scene-hotspots {
-  bottom: 8px;
+  position: static;
+  grid-row: 4;
+  min-height: 44px;
 }
 .code-view {
   width: min(1100px, calc(100vw - 32px));
@@ -164,6 +227,15 @@ main.playing #arena:not(:empty) {
   white-space: normal;
   overflow-wrap: anywhere;
 }
+.code-preview bdi {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#challenge .chosen-lines .code-preview {
+  margin-inline: 0;
+}
 .game-settings > div {
   inset: 64px auto auto 12px;
 }
@@ -204,13 +276,25 @@ select:focus-visible {
     display: inline;
   }
   main.playing #arena:not(:empty) {
-    grid-template-rows: auto minmax(0, 1fr) 88px;
     gap: 6px;
   }
   .code-view {
     width: 100%;
     height: 100dvh;
     margin: 0;
+  }
+}
+@media (max-width: 520px) {
+  main.playing #arena:not(:empty) {
+    --reading-height: 360px;
+  }
+}
+@media (max-height: 850px) {
+  main.playing .hud {
+    display: none;
+  }
+  .compact-stats {
+    display: inline;
   }
 }
 @media (max-height: 450px) {
@@ -222,11 +306,8 @@ select:focus-visible {
     min-height: 0;
     overflow: hidden;
   }
-  main.playing #arena:not(:empty) {
-    grid-template-rows: auto minmax(0, 1fr);
-  }
   #arena .scene-hotspots {
-    display: none;
+    display: flex;
   }
   .speaker-heading {
     padding: 2px 10px;
@@ -243,21 +324,36 @@ select:focus-visible {
   }
 }
 
-#arena .npc-speech > #feedback {
+/* Keep readable pages when landscape or the on-screen keyboard reduces the viewport. */
+main.playing {
+  height: auto;
+  min-height: max(
+    680px,
+    calc(
+      100dvh - var(--game-header-height, 56px) - env(safe-area-inset-top) -
+        env(safe-area-inset-bottom)
+    )
+  );
+  overflow: visible;
+}
+
+#arena .room-toolbar > #feedback {
   position: static;
   inset: auto;
-  flex-shrink: 0;
-  max-height: 40%;
+  direction: rtl;
+  text-align: center;
+  grid-column: 1 / -1;
+  max-height: 160px;
   overflow: auto;
-  margin: 0 12px;
+  margin: 0;
 }
-#arena .npc-speech > #feedback > p {
+#arena .room-toolbar > #feedback > p {
   margin: 6px 0;
   font-size: 16px;
   line-height: 1.7;
   overflow-wrap: anywhere;
 }
-#arena .npc-speech > #feedback:not(:has(p:not(:empty))) {
+#arena .room-toolbar > #feedback:not(:has(p:not(:empty))) {
   display: none;
 }
 .code-view header {
@@ -268,10 +364,67 @@ select:focus-visible {
   margin: 0;
   font-size: 16px;
 }
+.code-view header #shop-status {
+  position: static;
+  margin: 0;
+  font-size: 16px;
+  overflow-wrap: anywhere;
+}
+.code-view .workshop p,
+.code-view .workshop li,
+.code-view .learning-sources a {
+  font-size: 16px;
+  line-height: 1.9;
+}
 .code-view header button {
   margin-inline-start: auto;
 }
 .code-preview.selected {
   border-color: #91edbb;
   background: #294f40;
+  color: #eef5ef;
+}
+.question-help {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 4px 10px;
+  font-size: 22px;
+}
+.lesson-help {
+  position: fixed;
+  width: min(560px, calc(100vw - 24px));
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  padding: 16px;
+  border: 2px solid #80bfa1;
+  background: #172d29;
+  color: #eef5ef;
+  font-size: 18px;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+.lesson-help::backdrop {
+  background: #080f1bcc;
+}
+.lesson-help header {
+  position: sticky;
+  top: 0;
+  background: #172d29;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.lesson-help button {
+  min-height: 44px;
+  font-size: 16px;
+}
+.lesson-help p {
+  font-size: 16px;
+  line-height: 1.9;
+  color: #eef5ef;
+}
+@media (max-width: 320px) {
+  #arena .speech-content {
+    margin-block: 4px;
+  }
 }

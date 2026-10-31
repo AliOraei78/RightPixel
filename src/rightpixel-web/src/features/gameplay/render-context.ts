@@ -1,6 +1,7 @@
 import type { GameNode, PlayerState } from '../../core/contracts';
 import type { GameGateway } from '../../core/ports';
 export interface RenderContext {
+  reviewing?: boolean;
   advancePage?: () => boolean;
   roundIndex?: number;
   checkpoint?: Record<string, unknown>;

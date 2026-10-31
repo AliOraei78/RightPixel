@@ -3,7 +3,7 @@ import { mountAvatarPicker } from '../infrastructure/media/avatars';
 import { mountAuth } from '../features/auth/page';
 import { updateHud } from '../ui/hud';
 import { ViewScope } from '../ui/lifecycle';
-import { renderShell } from './shell';
+import { profileIcon, renderShell } from './shell';
 import { mountProfile } from '../features/profile/page';
 import { configurePlatform } from '../ui/platform';
 import { files } from '../infrastructure/browser/files';
@@ -55,7 +55,8 @@ const escape = (s: string) =>
     (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!,
   );
 function safeTarget(value: string | null) {
-  return value && (/^\/(dungeon|profile)$/.test(value) || /^\/play\/[A-Za-z0-9_-]+$/.test(value))
+  return value &&
+    (/^\/(dungeon|profile)$/.test(value) || /^\/(play|review)\/[A-Za-z0-9_-]+$/.test(value))
     ? value
     : '/dungeon';
 }
@@ -79,7 +80,7 @@ function render() {
   if (path === '/') {
     const player = playerStore.value;
     const signed = session === 'authenticated' && player;
-    app.innerHTML = `<main class="welcome"><a class="brand" href="#/">RIGHT<span>PIXEL</span></a><section class="welcome-grid"><div><p class="eyebrow">سفر یادگیری تو</p><h1>C# را با حل معما و شکست نگهبان‌ها یاد بگیر</h1><p>هر مفهوم یک چالش تازه است. قدم‌به‌قدم یاد بگیر و مسیر قهرمان خودت را بساز.</p><div id="welcome-identity"></div><div class="welcome-actions"><button id="begin" ${session === 'checking' || session === 'error' ? 'disabled' : ''}>${session === 'checking' ? 'آماده‌سازی سفر…' : signed ? 'ادامهٔ سفر' : 'شروع سفر'}</button><a class="button-link" href="${signed ? '#/dungeon' : '#/login'}">${signed ? 'نقشهٔ یادگیری' : 'حساب دارم'}</a>${signed ? '<a href="#/profile">پروفایل</a>' : ''}</div><p id="welcome-status" role="status"></p>${session === 'error' ? '<button id="retry">تلاش دوباره</button>' : ''}</div><canvas class="welcome-scene" aria-label="قهرمان و نگهبان سیاه‌چال"></canvas></section><div class="welcome-features"><div><b>یادگیری مرحله‌ای</b><p>هر اتاق، یک قدم تا تسلط بر C#</p></div><div><b>معما و نبرد</b><p>با حل چالش‌ها راهت را باز کن</p></div><div><b>سیو مستقل</b><p>پیشرفتت همراه حساب تو می‌ماند</p></div></div></main>`;
+    app.innerHTML = `<main class="welcome"><a class="brand" href="#/">RIGHT<span>PIXEL</span></a><section class="welcome-grid"><div><p class="eyebrow">سفر یادگیری تو</p><h1>C# را با حل معما و شکست نگهبان‌ها یاد بگیر</h1><p>هر مفهوم یک چالش تازه است. قدم‌به‌قدم یاد بگیر و مسیر قهرمان خودت را بساز.</p><div id="welcome-identity"></div><div class="welcome-actions"><button id="begin" ${session === 'checking' || session === 'error' ? 'disabled' : ''}>${session === 'checking' ? 'آماده‌سازی سفر…' : signed ? 'ادامهٔ سفر' : 'شروع سفر'}</button><a class="button-link" href="${signed ? '#/dungeon' : '#/login'}">${signed ? 'نقشهٔ یادگیری' : 'حساب دارم'}</a>${signed ? `<a class="profile-link" href="#/profile" aria-label="پروفایل" title="پروفایل">${profileIcon}</a>` : ''}</div><p id="welcome-status" role="status"></p>${session === 'error' ? '<button id="retry">تلاش دوباره</button>' : ''}</div><canvas class="welcome-scene" aria-label="قهرمان و نگهبان سیاه‌چال"></canvas></section><div class="welcome-features"><div><b>یادگیری مرحله‌ای</b><p>هر اتاق، یک قدم تا تسلط بر C#</p></div><div><b>معما و نبرد</b><p>با حل چالش‌ها راهت را باز کن</p></div><div><b>سیو مستقل</b><p>پیشرفتت همراه حساب تو می‌ماند</p></div></div></main>`;
     if (signed) {
       const identity = app.querySelector('#welcome-identity')!;
       const avatar = document.createElement('canvas');
@@ -152,7 +153,7 @@ function render() {
     navigate('/login?returnTo=' + encodeURIComponent(safeTarget(path)), true);
     return;
   }
-  const room = /^\/play\/([A-Za-z0-9_-]+)$/.exec(path);
+  const room = /^\/(play|review)\/([A-Za-z0-9_-]+)$/.exec(path);
   const selected = routes.find((r) => '/' + r[0] === path);
   renderShell(app, playerStore.value, room ? 'dungeon' : path.slice(1), routes, selected);
   app.querySelector('.brand')?.setAttribute('href', '#/');
@@ -228,13 +229,14 @@ function render() {
   } else if (path === '/dungeon' || room)
     void mountFeatures(
       content,
-      room ? room[1]! : '',
+      room ? room[2]! : '',
       storage,
       playerStore.value!,
       async () => {},
       (s) => {
         playerStore.value = s;
       },
+      room?.[1] === 'review',
     );
   else
     content.innerHTML =

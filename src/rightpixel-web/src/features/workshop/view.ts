@@ -60,7 +60,6 @@ export function mountWorkshop(
   saved.role = 'status';
   editor.addEventListener('input', () => {
     save?.({ draft: editor.value });
-    saved.textContent = 'در حال ذخیره در حساب…';
   });
   label.append(editor);
   details.append(label, saved);

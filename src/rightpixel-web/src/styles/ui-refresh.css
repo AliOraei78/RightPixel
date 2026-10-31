@@ -73,10 +73,16 @@ nav a {
 }
 .hud .identity {
   margin-inline-end: auto;
+  min-width: 0;
+}
+.hud .identity > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .player-avatar {
   width: 44px;
   height: 44px;
+  flex-shrink: 0;
 }
 #arena:empty {
   display: none;
@@ -111,8 +117,12 @@ nav a {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
   margin-top: 12px;
+}
+.avatar-paging span {
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .avatar-paging button {
   min-height: 44px;
@@ -345,7 +355,7 @@ pre,
   }
   .hud {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 90px), 1fr));
     gap: 4px;
     padding: 6px;
   }
@@ -874,4 +884,17 @@ main.playing {
   direction: ltr;
   unicode-bidi: isolate;
   text-align: right;
+}
+.profile-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px;
+  border: 1px solid #40576c;
+}
+.profile-link svg {
+  display: block;
+  flex-shrink: 0;
 }

@@ -99,7 +99,7 @@ type CommonNode = {
   explanation: string | null;
 };
 export type GameNode = {
-  [K in NodeType]: CommonNode & { type: K; payload: Payloads[K] };
+  [K in NodeType]: CommonNode & { type: K; payload: Payloads[K] & { learningNote?: string[] } };
 }[NodeType];
 export interface RoomSummary {
   id: string;

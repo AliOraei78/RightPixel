@@ -51,9 +51,10 @@ export function renderWhoAmI(
       count >= (payload.clueCount ?? payload.clues.length);
   }
   show();
-  payload.options.forEach((option) =>
-    button(option, () => {
-      void submit(option);
-    }),
+  payload.options.forEach(
+    (option) =>
+      (button(option, () => {
+        void submit(option);
+      }).disabled = !!context.reviewing),
   );
 }

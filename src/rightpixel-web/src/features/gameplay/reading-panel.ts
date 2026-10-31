@@ -9,6 +9,8 @@ export function mountReadingPanel(
   pages.className = 'reading-pages';
   pages.append(...body.childNodes);
   body.append(pages);
+  const continuous = !!body.closest('.npc-speech');
+  body.classList.toggle('continuous-reading', continuous);
   const nav = document.createElement('div');
   nav.className = 'reading-navigation';
   const previous = document.createElement('button');
@@ -28,6 +30,14 @@ export function mountReadingPanel(
   function update() {
     const width = body.clientWidth;
     if (!width) return;
+    if (continuous) {
+      nav.hidden = true;
+      if (pendingPage !== undefined && !pages.querySelector('[aria-busy="true"]')) {
+        body.scrollTop = pendingPage * body.clientHeight;
+        pendingPage = undefined;
+      }
+      return;
+    }
     pages.style.width = `${width}px`;
     total = Math.max(1, Math.round((pages.scrollWidth + 24) / (width + 24)));
     const typing = pages.querySelector('[aria-busy="true"]');
@@ -60,10 +70,14 @@ export function mountReadingPanel(
   };
   // Keyboard focus must reveal the column containing the focused control.
   pages.addEventListener('focusin', (event) => {
+    if (continuous) return;
+    body.scrollLeft = 0;
+    update();
     const target = event.target as HTMLElement;
     const box = target.getBoundingClientRect(),
       viewport = body.getBoundingClientRect();
     if (box.left < viewport.left || box.right > viewport.right) {
+      pendingPage = undefined;
       page = Math.max(
         0,
         Math.min(
@@ -73,7 +87,6 @@ export function mountReadingPanel(
       );
       update();
     }
-    body.scrollLeft = 0;
   });
   const observer = new MutationObserver(() => {
     const index = pages.querySelector<HTMLElement>('.dialogue-bubble')?.dataset.dialogueIndex;
@@ -81,6 +94,7 @@ export function mountReadingPanel(
       dialogueIndex = index;
       pendingPage = undefined;
       page = 0;
+      body.scrollTop = 0;
     }
     schedule();
   });
@@ -90,6 +104,14 @@ export function mountReadingPanel(
     characterData: true,
     attributes: true,
     attributeFilter: ['aria-busy', 'data-dialogue-index'],
+  });
+  body.addEventListener('scroll', () => {
+    if (!continuous || pendingPage !== undefined) return;
+    const current = Math.floor(body.scrollTop / Math.max(1, body.clientHeight));
+    if (current !== page) {
+      page = current;
+      savePage(page);
+    }
   });
   const additions = new MutationObserver(() => {
     for (const child of [...body.childNodes]) if (child !== pages) pages.append(child);
@@ -103,6 +125,7 @@ export function mountReadingPanel(
   return {
     pages,
     advance() {
+      if (continuous) return false;
       update();
       if (page + 1 >= total) return false;
       pendingPage = undefined;
@@ -114,6 +137,7 @@ export function mountReadingPanel(
     reset() {
       pendingPage = undefined;
       page = 0;
+      body.scrollTop = 0;
       schedule();
     },
     dispose() {
@@ -125,18 +149,19 @@ export function mountReadingPanel(
   };
 }
 
-export function openCodeView(content: HTMLElement, label: string, timer?: HTMLElement) {
+export function openCodeView(content: HTMLElement, label: string, notices: HTMLElement[] = []) {
   const dialog = document.createElement('dialog');
   dialog.className = 'code-view';
   const header = document.createElement('header');
   const title = document.createElement('strong');
   title.textContent = label;
   dialog.setAttribute('aria-label', label);
-  const timerSlot = document.createComment('timer location');
-  if (timer) {
-    timer.before(timerSlot);
-    header.append(timer);
-  }
+  const noticeSlots = notices.map((notice) => {
+    const slot = document.createComment('notice location');
+    notice.before(slot);
+    header.append(notice);
+    return { notice, slot };
+  });
   const close = document.createElement('button');
   close.type = 'button';
   close.textContent = 'بستن';
@@ -153,7 +178,7 @@ export function openCodeView(content: HTMLElement, label: string, timer?: HTMLEl
     'close',
     () => {
       slot.replaceWith(content);
-      if (timer) timerSlot.replaceWith(timer);
+      for (const { notice, slot } of noticeSlots) slot.replaceWith(notice);
       dialog.remove();
     },
     { once: true },

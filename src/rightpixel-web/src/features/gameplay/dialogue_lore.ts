@@ -1,6 +1,5 @@
 import type { GameNode } from '../../core/contracts';
 import type { RenderContext } from './render-context';
-import { appendSources } from '../workshop/view';
 import { platform } from '../../ui/platform';
 export function renderDialogueLore(
   node: Extract<GameNode, { type: 'dialogue_lore' }>,
@@ -10,6 +9,9 @@ export function renderDialogueLore(
   let index = 0,
     timer: number | undefined,
     typing = false;
+  const first = payload.dialogues[0]?.includes('پیش‌نیاز:')
+    ? Math.min(1, payload.dialogues.length - 1)
+    : 0;
   const line = context.paragraph('');
   line.className = 'dialogue-bubble';
   line.setAttribute('aria-live', 'off');
@@ -28,6 +30,8 @@ export function renderDialogueLore(
   };
   const show = () => {
     stop();
+    if (previous) previous.disabled = index <= first;
+    if (context.reviewing) advance.disabled = index + 1 >= payload.dialogues.length;
     const text = payload.dialogues[index] ?? payload.keyTakeaway;
     const words = text.split(/\s+/);
     let visible = 0;
@@ -36,6 +40,7 @@ export function renderDialogueLore(
     line.textContent = '';
     typing = true;
     if (
+      context.reviewing ||
       platform.preferences.snapshot.motion === 'reduced' ||
       (platform.preferences.snapshot.motion === 'system' &&
         window.matchMedia('(prefers-reduced-motion: reduce)').matches)
@@ -57,6 +62,13 @@ export function renderDialogueLore(
     }, 120);
   };
   const next = () => {
+    if (context.reviewing) {
+      if (index + 1 < payload.dialogues.length) {
+        index++;
+        show();
+      }
+      return;
+    }
     if (context.isDone() || context.isBusy() || context.isAwaiting()) return;
     if (typing) {
       full();
@@ -73,25 +85,46 @@ export function renderDialogueLore(
     }
   };
   line.onclick = next;
+  (context.challenge.closest('.npc-speech') ?? context.challenge).addEventListener(
+    'click',
+    (event) => {
+      const target = event.target;
+      if (
+        event instanceof MouseEvent &&
+        event.button === 0 &&
+        typing &&
+        target instanceof Element &&
+        !target.closest('button,a,input,textarea,select,summary')
+      )
+        full();
+    },
+  );
   line.onkeydown = (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       next();
     }
   };
-  context.button('ادامه', next, context.challenge);
-  appendSources(context.challenge, payload.sources);
+  const previous = context.reviewing
+    ? context.button(
+        'بخش قبلی',
+        () => {
+          if (index > first) {
+            index--;
+            show();
+          }
+        },
+        context.challenge,
+      )
+    : undefined;
+  const advance = context.button(context.reviewing ? 'بخش بعدی' : 'ادامه', next, context.challenge);
+  if (previous) {
+    previous.prepend('→ ');
+    advance.append(' ←');
+  }
   const checkpoint = context.checkpoint as { dialogueIndex?: number } | undefined;
   index = Math.min(payload.dialogues.length - 1, Math.max(0, checkpoint?.dialogueIndex ?? 0));
   if (payload.dialogues[0]?.includes('پیش‌نیاز:')) {
-    const metadata = document.createElement('details');
-    metadata.className = 'learning-sources';
-    const summary = document.createElement('summary');
-    summary.textContent = 'اطلاعات این مرحله';
-    const text = document.createElement('p');
-    text.textContent = payload.dialogues[0];
-    metadata.append(summary, text);
-    context.challenge.append(metadata);
     if (index === 0) index = Math.min(1, payload.dialogues.length - 1);
   }
   show();

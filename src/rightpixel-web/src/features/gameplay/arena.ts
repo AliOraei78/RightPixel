@@ -27,9 +27,18 @@ export async function mountArena(
   onNext: ((id: string) => Promise<void>) | undefined,
   onBack: () => void,
   current: () => boolean,
+  review?: {
+    phase: string;
+    checkpoint?: { revision: number; state: Record<string, unknown> };
+    previous?: { id: string; title: string };
+    next?: { id: string; title: string };
+    navigate: (id: string) => void;
+  },
 ): Promise<() => void> {
-  const session = await store.start(node.id);
-  const checkpoint = await store.checkpoint(node.id);
+  const session = review
+    ? { state: initialState, attemptId: '', deadline: null, roundIndex: 0 }
+    : await store.start(node.id);
+  const checkpoint = review?.checkpoint ?? (await store.checkpoint(node.id));
   let saveQueue = Promise.resolve();
   let saveViewState: (state: Record<string, unknown>) => void = () => {};
   let npcReader: ReturnType<typeof mountReadingPanel> | undefined;
@@ -54,6 +63,7 @@ export async function mountArena(
   root.querySelector('#npc')!.textContent = node.npcName;
   const challenge = root.querySelector<HTMLElement>('#challenge')!;
   const roomTimer = root.querySelector<HTMLElement>('#timer')!;
+  const saveStatus = root.querySelector<HTMLElement>('#shop-status')!;
   const npcSpeech = document.createElement('section');
   npcSpeech.className = 'speech npc-speech';
   npcSpeech.setAttribute('aria-label', node.npcName);
@@ -104,7 +114,6 @@ export async function mountArena(
   npcSpeech.append(root.querySelector('#hint-text')!);
   const status = root.querySelector('#feedback [role=status]')!;
   const actions = root.querySelector('#feedback .actions')!;
-  npcBubble.insertBefore(root.querySelector('#feedback')!, npcSpeech);
   const shop = root.querySelector('#shop')!;
   const inventory = document.createElement('details');
   inventory.className = 'scene-inventory';
@@ -121,26 +130,82 @@ export async function mountArena(
   );
   const notices = document.createElement('div');
   notices.className = 'room-notices';
-  notices.append(roomTimer, root.querySelector('#shop-status')!, root.querySelector('#level-up')!);
+  notices.append(roomTimer, saveStatus, root.querySelector('#level-up')!);
   toolbar.append(notices);
+  toolbar.append(root.querySelector('#feedback')!);
   const compactStats = document.createElement('span');
   compactStats.className = 'compact-stats';
   notices.append(compactStats);
   root.prepend(toolbar);
+  if (review) {
+    const navigation = document.createElement('nav');
+    navigation.className = 'review-navigation';
+    navigation.setAttribute('aria-label', 'مرور قسمت‌های تکمیل‌شدهٔ فاز');
+    const caption = document.createElement('p');
+    caption.textContent = `مرور ${review.phase} · امتیاز و پیشرفتت تغییر نمی‌کند`;
+    navigation.append(caption);
+    for (const [label, target] of [
+      ['→ قسمت قبلی', review.previous],
+      ['قسمت بعدی ←', review.next],
+    ] as const) {
+      const control = button(label, () => target && review.navigate(target.id), navigation);
+      control.disabled = !target;
+      if (target) control.title = target.title;
+    }
+    toolbar.append(navigation);
+  }
+  const lessonHelp = document.createElement('dialog');
+  lessonHelp.className = 'lesson-help';
+  lessonHelp.setAttribute('aria-label', 'آموزش کوتاه این سؤال');
+  const helpHeader = document.createElement('header');
+  const helpTitle = document.createElement('strong');
+  helpTitle.textContent = 'آموزش کوتاه';
+  const closeHelp = document.createElement('button');
+  closeHelp.type = 'button';
+  closeHelp.textContent = 'بستن';
+  closeHelp.onclick = () => lessonHelp.close();
+  helpHeader.append(helpTitle, closeHelp);
+  lessonHelp.append(helpHeader);
+  const roundNote =
+    node.type === 'boss_fight'
+      ? (node.payload.rounds[session.roundIndex ?? 0]?.payload as { learningNote?: string[] })
+          ?.learningNote
+      : undefined;
+  const learningNote = roundNote ?? node.payload.learningNote;
+  for (const text of learningNote ?? []) {
+    const paragraph = document.createElement('p');
+    paragraph.textContent = text;
+    lessonHelp.append(paragraph);
+  }
+  const help = document.createElement('button');
+  help.type = 'button';
+  help.className = 'question-help';
+  help.textContent = '؟';
+  help.setAttribute('aria-label', 'آموزش کوتاه این سؤال');
+  help.title = 'آموزش کوتاه این سؤال';
+  help.hidden = node.type === 'dialogue_lore' || !learningNote?.length;
+  help.onclick = () => lessonHelp.showModal();
+  notices.append(help);
+  root.append(lessonHelp);
   inventory.onkeydown = (e) => {
     if (e.key === 'Escape') {
       inventory.open = false;
       inventoryTitle.focus();
     }
   };
+  let roomFrame = 0;
   const roomSize = new ResizeObserver(() => {
-    root.style.setProperty('--room-header-height', `${toolbar.getBoundingClientRect().height}px`);
-    const controls = root.querySelector('.scene-hotspots');
-    if (controls)
-      root.style.setProperty(
-        '--scene-controls-height',
-        `${controls.getBoundingClientRect().height}px`,
-      );
+    cancelAnimationFrame(roomFrame);
+    roomFrame = requestAnimationFrame(() => {
+      if (disposed) return;
+      root.style.setProperty('--room-header-height', `${toolbar.getBoundingClientRect().height}px`);
+      const controls = root.querySelector('.scene-hotspots');
+      if (controls)
+        root.style.setProperty(
+          '--scene-controls-height',
+          `${controls.getBoundingClientRect().height}px`,
+        );
+    });
   });
   roomSize.observe(toolbar);
   const scene = platform.scene(root.querySelector('canvas')!, node.npcSprite, node.type);
@@ -159,7 +224,8 @@ export async function mountArena(
     b.type = 'button';
     b.textContent = label;
     b.onclick = fn;
-    if (parent === npcSpeech && label === 'ادامه') npcFooter.append(b);
+    if (parent === npcSpeech && ['ادامه', 'بخش قبلی', 'بخش بعدی'].includes(label))
+      npcFooter.append(b);
     else if (
       parent === playerChoices &&
       ['اجرای آزمایش', 'بررسی ترتیب', 'بریدن سیم و تست کد'].includes(label)
@@ -197,6 +263,7 @@ export async function mountArena(
     }[result.failureReason ?? 'incorrect_answer'];
   }
   async function submit(answer: unknown) {
+    if (review) return;
     if (done || busy || !live()) return;
     const savedAnswer = structuredClone(answer);
     busy = true;
@@ -216,6 +283,7 @@ export async function mountArena(
       const result = await store.answer<AnswerResult>(node.id, session.attemptId, savedAnswer);
       const leveledUp = result.state.level > state.level;
       done = true;
+      if (lessonHelp.open) lessonHelp.close();
       document.querySelector<HTMLDialogElement>('.code-view')?.close();
       choose.hidden = true;
       awaitingReceipt = false;
@@ -343,13 +411,15 @@ export async function mountArena(
 
   function updateShop() {
     hint.disabled =
+      !!review ||
       busy ||
       awaitingReceipt ||
       done ||
       !node.hint ||
       !!unlock()?.hintPurchased ||
       state.coins < 20;
-    potion.disabled = busy || awaitingReceipt || state.hp >= state.maxHp || state.coins < 30;
+    potion.disabled =
+      !!review || busy || awaitingReceipt || state.hp >= state.maxHp || state.coins < 30;
     chest.disabled = hint.disabled;
     root.querySelector('#hint-text')!.textContent = unlock()?.hintPurchased
       ? (node.hint ?? '')
@@ -357,6 +427,7 @@ export async function mountArena(
   }
   let shopping = false;
   async function purchase(kind: string) {
+    if (review) return;
     if (shopping || !live()) return;
     shopping = true;
     hint.disabled = true;
@@ -369,8 +440,7 @@ export async function mountArena(
       }
       if (live()) outcome('coin');
       if (live())
-        root.querySelector('#shop-status')!.textContent =
-          `خرید انجام شد · جان ${state.hp}/${state.maxHp} · سکه ${state.coins}`;
+        saveStatus.textContent = `خرید انجام شد · جان ${state.hp}/${state.maxHp} · سکه ${state.coins}`;
     } catch (e) {
       if (live()) error(e);
     } finally {
@@ -407,16 +477,18 @@ export async function mountArena(
   updateShop();
   let keyHandler = (_e: KeyboardEvent) => {};
   renderChallenge(node, {
+    reviewing: !!review,
     advancePage: () => npcReader?.advance() ?? false,
     roundIndex: session.roundIndex,
     checkpoint: checkpoint.state,
     saveCheckpoint: (saveViewState = (state) => {
-      if (!live() || done || busy || awaitingReceipt) return;
+      if (review || !live() || done || busy || awaitingReceipt) return;
       checkpoint.state = { ...checkpoint.state, ...state };
       const snapshot = structuredClone(checkpoint.state);
       saveQueue = saveQueue
         .then(async () => {
           if (!live() || done || awaitingReceipt) return;
+          saveStatus.textContent = 'در حال ذخیره در حساب…';
           const saved = await store.saveCheckpoint(
             node.id,
             session.attemptId,
@@ -424,12 +496,11 @@ export async function mountArena(
             snapshot,
           );
           checkpoint.revision = saved.revision;
-          if (live()) root.querySelector('#shop-status')!.textContent = 'ذخیره شد';
+          if (live()) saveStatus.textContent = 'ذخیره شد';
         })
         .catch((e) => {
           if (live() && !done)
-            root.querySelector('#shop-status')!.textContent =
-              e instanceof Error ? e.message : 'ذخیره انجام نشد.';
+            saveStatus.textContent = e instanceof Error ? e.message : 'ذخیره انجام نشد.';
         });
     }),
     challenge: npcSpeech,
@@ -442,13 +513,21 @@ export async function mountArena(
     live,
     error,
     unlock,
-    isDone: () => done,
+    isDone: () => done || !!review,
     isBusy: () => busy,
     isAwaiting: () => awaitingReceipt,
     onKey: (handler) => {
       keyHandler = handler;
     },
   });
+  if (review) {
+    playerFooter.querySelectorAll<HTMLButtonElement>('[data-submit]').forEach((button) => {
+      button.disabled = true;
+    });
+    playerSpeech.querySelectorAll<HTMLTextAreaElement>('textarea').forEach((editor) => {
+      editor.readOnly = true;
+    });
+  }
   npcReader = mountReadingPanel(
     npcSpeech,
     npcFooter,
@@ -476,6 +555,7 @@ export async function mountArena(
       bubble === playerBubble,
     );
     const label = document.createElement('span');
+    if (bubble === playerBubble) label.dataset.playerName = 'true';
     label.textContent = speaker;
     heading.append(portrait, label);
     bubble.prepend(heading);
@@ -517,7 +597,7 @@ export async function mountArena(
       previewObservers.push(previewObserver);
       show.onclick = () => {
         code.hidden = false;
-        openCodeView(code, 'کد کامل', roomTimer);
+        openCodeView(code, 'کد کامل', [roomTimer, saveStatus]);
         const dialog = code.closest('dialog')!;
         dialog.addEventListener(
           'close',
@@ -570,6 +650,8 @@ export async function mountArena(
     codeObserver.disconnect();
     previewObservers.forEach((observer) => observer.disconnect());
     roomSize.disconnect();
+    lessonHelp.remove();
+    cancelAnimationFrame(roomFrame);
     scene.dispose();
     npcReader?.dispose();
     playerReader.dispose();

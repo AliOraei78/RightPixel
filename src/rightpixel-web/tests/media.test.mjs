@@ -149,3 +149,15 @@ test('48 account avatars have distinct pixel artwork',()=>{const fingerprints=ne
 
 const {friendlyPersian}=await import('../.media-tests/ui/persian-copy.js');
 test('friendly Persian keeps negation and technical content intact',()=>{assert.equal(friendlyPersian('این کد اجرا نمی‌شود.'),'این کد اجرا نمی‌شه.');assert.equal(friendlyPersian('C# ref int x = 3;'),'C# ref int x = 3;');assert.equal(friendlyPersian('دو شیء یکسان نیستند؛ کپی نمی‌کند.'),'دو شیء یکسان نیستند؛ کپی نمی‌کنه.');assert.equal(friendlyPersian('آرایه‌ها را بررسی کن.'),'آرایه‌ها رو بررسی کن.');});
+
+const {expandAbbreviations}=await import('../.media-tests/ui/persian-copy.js');
+test('technical abbreviations expand in prose and English labels without touching identifiers',()=>{
+  const text='CLI، CLR و IL';
+  assert.equal(expandAbbreviations(text),'CLI (Common Language Infrastructure)، CLR (Common Language Runtime) و IL (Intermediate Language)');
+  assert.equal(friendlyPersian('JIT'),'JIT (Just-In-Time)');
+  assert.equal(expandAbbreviations('LOH (Large Object Heap)'),'LOH (Large Object Heap)');
+  assert.equal(expandAbbreviations('Nullable Reference Types - NRT'),'Nullable Reference Types - NRT');
+  assert.equal(expandAbbreviations(expandAbbreviations(text)),expandAbbreviations(text));
+  assert.equal(expandAbbreviations('GC.Collect IGCService https://example.com/CLI'),'GC.Collect IGCService https://example.com/CLI');
+  assert.equal(expandAbbreviations('DTOها'),'DTO (Data Transfer Object)ها');
+});

@@ -15,6 +15,11 @@
   align-items: center;
   gap: clamp(24px, 5vw, 80px);
 }
+.welcome-grid > div,
+#welcome-identity strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 .welcome h1 {
   font-size: clamp(26px, 3vw, 48px);
   line-height: 1.7;

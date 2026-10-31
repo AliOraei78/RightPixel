@@ -115,6 +115,16 @@ public class PlayService(IGameWorkspace db, PlayerService player, TimeProvider c
         int earnedXp = 0, earnedCoins = 0;
         if (correct)
         {
+            if (n.Type == NodeType.boss_fight)
+            {
+                var checkpoint = db.PlayerCheckpoints.SingleOrDefault(x => x.PlayerId == p.Id && x.NodeId == id);
+                if (checkpoint is not null)
+                {
+                    checkpoint.BossRound = 0;
+                    checkpoint.StateJson = "{}";
+                    checkpoint.Revision++;
+                }
+            }
             if (!progress.CompletedAt.HasValue) p.Streak++;
             p.BestStreak = Math.Max(p.BestStreak, p.Streak);
             var unlock = db.PlayerNodeUnlocks.SingleOrDefault(x => x.PlayerId == p.Id && x.NodeId == id);
